@@ -3,7 +3,9 @@ const adminRouter = Router()
 const {adminModel} = require('../db')
 const jwt = require("jsonwebtoken")
 
-const JWT_ADMIN_PASSWORD = "admin123 "
+  const {JWT_ADMIN_PASSWORD} = require("../routes/config")
+const { adminMiddleware } = require('../middleware/admin')
+
 
 
 
@@ -55,19 +57,33 @@ const JWT_ADMIN_PASSWORD = "admin123 "
     }
 })
 
-adminRouter.post('/',function(rwq,res){
+adminRouter.post('/course',adminMiddleware,  async function(rwq,res){
+    const adminId = req.userId;
+
+    const {title,description,imageUrl,price }= req.body;
+
+   const course =  await courseModel.create({
+        title:title,
+        description:description,
+        imageUrl:imageUrl,
+        price:price,
+        creatorId :adminId
+     })
+
+
+    res.json({
+         message:"Course Created",
+         courseId: course._id
+    })
+})
+
+adminRouter.put('/course',function(rwq,res){
     res.json({
          message:"signup endpoint"
     })
 })
 
-adminRouter.put('/',function(rwq,res){
-    res.json({
-         message:"signup endpoint"
-    })
-})
-
-adminRouter.get('/bulk',function(rwq,res){
+adminRouter.get('/course/bulk',function(rwq,res){
     res.json({
          message:"signup endpoint"
     })
